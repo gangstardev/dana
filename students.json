@@ -1,0 +1,77 @@
+[
+  {
+    "id": "1",
+    "fullName": "علی احمدی",
+    "className": "701",
+    "grades": [
+      { "subject": "ریاضی", "score": 18 },
+      { "subject": "علوم", "score": 17 },
+      { "subject": "فارسی", "score": 19 },
+      { "subject": "انگلیسی", "score": 16 },
+      { "subject": "تاریخ", "score": 18 }
+    ],
+    "discipline": 19,
+    "positivePoints": 5,
+    "negativePoints": 1
+  },
+  {
+    "id": "2",
+    "fullName": "فاطمه رضایی",
+    "className": "701",
+    "grades": [
+      { "subject": "ریاضی", "score": 20 },
+      { "subject": "علوم", "score": 19 },
+      { "subject": "فارسی", "score": 18 },
+      { "subject": "انگلیسی", "score": 17 },
+      { "subject": "تاریخ", "score": 19 }
+    ],
+    "discipline": 20,
+    "positivePoints": 8,
+    "negativePoints": 0
+  },
+  {
+    "id": "3",
+    "fullName": "محمد حسینی",
+    "className": "702",
+    "grades": [
+      { "subject": "ریاضی", "score": 15 },
+      { "subject": "علوم", "score": 16 },
+      { "subject": "فارسی", "score": 17 },
+      { "subject": "انگلیسی", "score": 14 },
+      { "subject": "تاریخ", "score": 16 }
+    ],
+    "discipline": 16,
+    "positivePoints": 2,
+    "negativePoints": 3
+  },
+  {
+    "id": "4",
+    "fullName": "زهرا کریمی",
+    "className": "702",
+    "grades": [
+      { "subject": "ریاضی", "score": 19 },
+      { "subject": "علوم", "score": 18 },
+      { "subject": "فارسی", "score": 20 },
+      { "subject": "انگلیسی", "score": 19 },
+      { "subject": "تاریخ", "score": 18 }
+    ],
+    "discipline": 18,
+    "positivePoints": 6,
+    "negativePoints": 1
+  },
+  {
+    "id": "5",
+    "fullName": "حسن محمدی",
+    "className": "701",
+    "grades": [
+      { "subject": "ریاضی", "score": 17 },
+      { "subject": "علوم", "score": 16 },
+      { "subject": "فارسی", "score": 18 },
+      { "subject": "انگلیسی", "score": 15 },
+      { "subject": "تاریخ", "score": 17 }
+    ],
+    "discipline": 17,
+    "positivePoints": 3,
+    "negativePoints": 2
+  }
+]
