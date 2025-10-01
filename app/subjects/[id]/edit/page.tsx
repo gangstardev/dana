@@ -2,47 +2,47 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Student, CreateStudentData } from '@/types/student';
-import StudentForm from '@/components/StudentForm';
+import { Subject } from '@/types/subject';
+import SubjectForm from '@/components/SubjectForm';
 import { EditIcon } from '@/components/icons/3DIcons';
 
-interface EditStudentProps {
+interface EditSubjectProps {
   params: {
     id: string;
   };
 }
 
-export default function EditStudent({ params }: EditStudentProps) {
-  const [student, setStudent] = useState<Student | null>(null);
+export default function EditSubject({ params }: EditSubjectProps) {
+  const [subject, setSubject] = useState<Subject | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    fetchStudent();
+    fetchSubject();
   }, [params.id]);
 
-  const fetchStudent = async () => {
+  const fetchSubject = async () => {
     try {
-      const response = await fetch(`/api/students/${params.id}`);
+      const response = await fetch(`/api/subjects/${params.id}`);
       if (response.ok) {
         const data = await response.json();
-        setStudent(data);
+        setSubject(data);
       } else {
-        router.push('/');
+        router.push('/subjects');
       }
     } catch (error) {
-      console.error('Error fetching student:', error);
-      router.push('/');
+      console.error('Error fetching subject:', error);
+      router.push('/subjects');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmit = async (data: CreateStudentData) => {
+  const handleSubmit = async (data: any) => {
     setSaving(true);
     try {
-      const response = await fetch(`/api/students/${params.id}`, {
+      const response = await fetch(`/api/subjects/${params.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -51,44 +51,44 @@ export default function EditStudent({ params }: EditStudentProps) {
       });
 
       if (response.ok) {
-        router.push(`/students/${params.id}`);
+        router.push('/subjects');
       } else {
         const error = await response.json();
-        alert(error.error || 'خطا در به‌روزرسانی اطلاعات دانش‌آموز');
+        alert(error.error || 'خطا در به‌روزرسانی درس');
       }
     } catch (error) {
-      console.error('Error updating student:', error);
-      alert('خطا در به‌روزرسانی اطلاعات دانش‌آموز');
+      console.error('Error updating subject:', error);
+      alert('خطا در به‌روزرسانی درس');
     } finally {
       setSaving(false);
     }
   };
 
   const handleCancel = () => {
-    router.push(`/students/${params.id}`);
+    router.push('/subjects');
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-300">در حال بارگذاری...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
+          <p className="mt-4 text-green-300">در حال بارگذاری...</p>
         </div>
       </div>
     );
   }
 
-  if (!student) {
+  if (!subject) {
     return (
-      <div className="flex items-center justify-center bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">دانش‌آموز یافت نشد</h1>
+          <h1 className="text-2xl font-bold text-white mb-4">درس یافت نشد</h1>
           <button
-            onClick={() => router.push('/')}
-            className="text-blue-400 hover:text-blue-300"
+            onClick={() => router.push('/subjects')}
+            className="text-green-400 hover:text-green-300"
           >
-            بازگشت به صفحه اصلی
+            بازگشت به لیست دروس
           </button>
         </div>
       </div>
@@ -96,9 +96,9 @@ export default function EditStudent({ params }: EditStudentProps) {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-black">
       {/* Header */}
-      <header className="bg-gray-800 shadow-sm border-b border-gray-700">
+      <header className="bg-gray-900 shadow-lg border-b border-green-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center gap-4">
@@ -113,9 +113,9 @@ export default function EditStudent({ params }: EditStudentProps) {
               <div>
                 <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                   <EditIcon className="w-8 h-8 text-green-400" />
-                  ویرایش اطلاعات {student.fullName}
+                  ویرایش درس {subject.name}
                 </h1>
-                <p className="text-gray-300">اطلاعات دانش‌آموز را به‌روزرسانی کنید</p>
+                <p className="text-green-300">اطلاعات درس را به‌روزرسانی کنید</p>
               </div>
             </div>
           </div>
@@ -124,15 +124,15 @@ export default function EditStudent({ params }: EditStudentProps) {
 
       {/* Form */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-gray-800 rounded-lg shadow-sm p-8 border border-gray-700">
+        <div className="bg-gray-900 rounded-lg shadow-lg p-8 border border-green-500">
           {saving ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-4 text-gray-300">در حال ذخیره تغییرات...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
+              <p className="mt-4 text-green-300">در حال ذخیره تغییرات...</p>
             </div>
           ) : (
-            <StudentForm
-              student={student}
+            <SubjectForm
+              subject={subject}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
             />

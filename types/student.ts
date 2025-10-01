@@ -11,6 +11,7 @@ export interface Student {
   discipline: number;
   positivePoints: number;
   negativePoints: number;
+  profileImage?: string;
 }
 
 export interface CreateStudentData {
@@ -20,6 +21,7 @@ export interface CreateStudentData {
   discipline: number;
   positivePoints: number;
   negativePoints: number;
+  profileImage?: string;
 }
 
 export interface UpdateStudentData extends Partial<CreateStudentData> {

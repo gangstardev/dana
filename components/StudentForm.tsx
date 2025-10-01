@@ -8,9 +8,10 @@ interface StudentFormProps {
   student?: Student;
   onSubmit: (data: CreateStudentData) => void;
   onCancel: () => void;
+  onFormChange?: (data: CreateStudentData) => void;
 }
 
-export default function StudentForm({ student, onSubmit, onCancel }: StudentFormProps) {
+export default function StudentForm({ student, onSubmit, onCancel, onFormChange }: StudentFormProps) {
   const [formData, setFormData] = useState<CreateStudentData>({
     fullName: student?.fullName || '',
     className: student?.className || '701',
@@ -23,10 +24,19 @@ export default function StudentForm({ student, onSubmit, onCancel }: StudentForm
     ],
     discipline: student?.discipline || 0,
     positivePoints: student?.positivePoints || 0,
-    negativePoints: student?.negativePoints || 0
+    negativePoints: student?.negativePoints || 0,
+    profileImage: student?.profileImage || ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const updateFormData = (newData: Partial<CreateStudentData>) => {
+    const updatedData = { ...formData, ...newData };
+    setFormData(updatedData);
+    if (onFormChange) {
+      onFormChange(updatedData);
+    }
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -71,7 +81,18 @@ export default function StudentForm({ student, onSubmit, onCancel }: StudentForm
   const updateGrade = (index: number, score: number) => {
     const newGrades = [...formData.grades];
     newGrades[index].score = score;
-    setFormData({ ...formData, grades: newGrades });
+    updateFormData({ grades: newGrades });
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        updateFormData({ profileImage: e.target?.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -79,18 +100,49 @@ export default function StudentForm({ student, onSubmit, onCancel }: StudentForm
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Basic Information */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800">اطلاعات پایه</h3>
+          <h3 className="text-lg font-semibold text-white">اطلاعات پایه</h3>
+          
+          {/* Profile Image Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              عکس پروفایل
+            </label>
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-green-500 flex-shrink-0">
+                {formData.profileImage ? (
+                  <img 
+                    src={formData.profileImage} 
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-lg">
+                    {formData.fullName.charAt(0) || '?'}
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 hover:bg-gray-600 transition-all duration-200"
+                />
+                <p className="text-xs text-gray-400 mt-1">فرمت‌های مجاز: JPG, PNG, GIF</p>
+              </div>
+            </div>
+          </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               نام کامل *
             </label>
             <input
               type="text"
               value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+              onChange={(e) => updateFormData({ fullName: e.target.value })}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.fullName ? 'border-red-500' : 'border-gray-300'
+                errors.fullName ? 'border-red-500' : 'border-gray-600 bg-gray-700 text-white'
               }`}
               placeholder="نام کامل دانش‌آموز"
             />
@@ -98,14 +150,14 @@ export default function StudentForm({ student, onSubmit, onCancel }: StudentForm
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               کلاس *
             </label>
             <select
               value={formData.className}
-              onChange={(e) => setFormData({ ...formData, className: e.target.value as '701' | '702' })}
+              onChange={(e) => updateFormData({ className: e.target.value as '701' | '702' })}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.className ? 'border-red-500' : 'border-gray-300'
+                errors.className ? 'border-red-500' : 'border-gray-600 bg-gray-700 text-white'
               }`}
             >
               <option value="701">701</option>
@@ -117,13 +169,13 @@ export default function StudentForm({ student, onSubmit, onCancel }: StudentForm
 
         {/* Grades */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
             <GradeIcon className="w-5 h-5" />
             نمرات
           </h3>
           {formData.grades.map((grade, index) => (
             <div key={index}>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 {grade.subject}
               </label>
               <input
@@ -133,7 +185,7 @@ export default function StudentForm({ student, onSubmit, onCancel }: StudentForm
                 value={grade.score}
                 onChange={(e) => updateGrade(index, parseInt(e.target.value) || 0)}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors[`grade_${index}`] ? 'border-red-500' : 'border-gray-300'
+                  errors[`grade_${index}`] ? 'border-red-500' : 'border-gray-600 bg-gray-700 text-white'
                 }`}
               />
               {errors[`grade_${index}`] && (
@@ -147,7 +199,7 @@ export default function StudentForm({ student, onSubmit, onCancel }: StudentForm
       {/* Discipline and Points */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
             <DisciplineIcon className="w-4 h-4" />
             نمره انضباط
           </label>
@@ -156,41 +208,41 @@ export default function StudentForm({ student, onSubmit, onCancel }: StudentForm
             min="0"
             max="20"
             value={formData.discipline}
-            onChange={(e) => setFormData({ ...formData, discipline: parseInt(e.target.value) || 0 })}
+            onChange={(e) => updateFormData({ discipline: parseInt(e.target.value) || 0 })}
             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.discipline ? 'border-red-500' : 'border-gray-300'
+              errors.discipline ? 'border-red-500' : 'border-gray-600 bg-gray-700 text-white'
             }`}
           />
           {errors.discipline && <p className="text-red-500 text-sm mt-1">{errors.discipline}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             امتیاز مثبت
           </label>
           <input
             type="number"
             min="0"
             value={formData.positivePoints}
-            onChange={(e) => setFormData({ ...formData, positivePoints: parseInt(e.target.value) || 0 })}
+            onChange={(e) => updateFormData({ positivePoints: parseInt(e.target.value) || 0 })}
             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.positivePoints ? 'border-red-500' : 'border-gray-300'
+              errors.positivePoints ? 'border-red-500' : 'border-gray-600 bg-gray-700 text-white'
             }`}
           />
           {errors.positivePoints && <p className="text-red-500 text-sm mt-1">{errors.positivePoints}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             امتیاز منفی
           </label>
           <input
             type="number"
             min="0"
             value={formData.negativePoints}
-            onChange={(e) => setFormData({ ...formData, negativePoints: parseInt(e.target.value) || 0 })}
+            onChange={(e) => updateFormData({ negativePoints: parseInt(e.target.value) || 0 })}
             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.negativePoints ? 'border-red-500' : 'border-gray-300'
+              errors.negativePoints ? 'border-red-500' : 'border-gray-600 bg-gray-700 text-white'
             }`}
           />
           {errors.negativePoints && <p className="text-red-500 text-sm mt-1">{errors.negativePoints}</p>}

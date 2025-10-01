@@ -70,9 +70,9 @@ export default function SubjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen text-white">
       {/* Header */}
-      <header className="bg-gray-800 shadow-sm border-b border-gray-700">
+      <header className="bg-gray-900 shadow-lg border-b border-green-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center gap-4">
@@ -86,14 +86,14 @@ export default function SubjectsPage() {
               </Link>
               <div>
                 <h1 className="text-3xl font-bold text-white">مدیریت دروس</h1>
-                <p className="text-gray-300 mt-2">مدیریت دروس مدرسه</p>
+                <p className="text-green-300 mt-2">مدیریت دروس مدرسه</p>
               </div>
             </div>
             <button
               onClick={() => setShowAddForm(true)}
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+              className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 hover:scale-105 hover:shadow-lg transition-all duration-200 flex items-center gap-2 shadow-lg group"
             >
-              <AddIcon className="w-5 h-5" />
+              <AddIcon className="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" />
               افزودن درس جدید
             </button>
           </div>
@@ -102,7 +102,7 @@ export default function SubjectsPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {showAddForm && (
-          <div className="bg-gray-800 rounded-lg shadow-sm p-8 mb-8 border border-gray-700">
+          <div className="bg-gray-900 rounded-lg shadow-lg p-8 mb-8 border border-green-500">
             <SubjectForm
               onSubmit={handleAddSubject}
               onCancel={() => setShowAddForm(false)}
@@ -113,11 +113,11 @@ export default function SubjectsPage() {
         {/* Subjects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {subjects.map((subject) => (
-            <div key={subject.id} className="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700 hover:shadow-lg transition-shadow">
+            <div key={subject.id} className="bg-gray-900 rounded-lg shadow-lg p-6 border border-green-500 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 transition-all duration-300 hover:border-green-400">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div 
-                    className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
+                    className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl hover:scale-110 hover:rotate-12 transition-all duration-200"
                     style={{ backgroundColor: subject.color }}
                   >
                     {subject.icon}
@@ -130,16 +130,16 @@ export default function SubjectsPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => {/* ویرایش */}}
-                    className="p-2 text-gray-400 hover:text-blue-400 transition-colors"
+                  <Link
+                    href={`/subjects/${subject.id}/edit`}
+                    className="p-2 text-gray-400 hover:text-green-400 hover:scale-110 hover:rotate-12 transition-all duration-200 rounded-lg hover:bg-green-500/10"
                     title="ویرایش"
                   >
                     <EditIcon className="w-4 h-4" />
-                  </button>
+                  </Link>
                   <button
                     onClick={() => handleDelete(subject.id)}
-                    className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                    className="p-2 text-gray-400 hover:text-red-400 hover:scale-110 hover:rotate-12 transition-all duration-200 rounded-lg hover:bg-red-500/10"
                     title="حذف"
                   >
                     <DeleteIcon className="w-4 h-4" />
@@ -148,7 +148,7 @@ export default function SubjectsPage() {
               </div>
               
               {subject.description && (
-                <p className="text-gray-300 text-sm mb-4">{subject.description}</p>
+                <p className="text-gray-300 text-xs mb-4 leading-relaxed">{subject.description}</p>
               )}
               
               <div className="flex items-center justify-between">

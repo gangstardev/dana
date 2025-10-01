@@ -3,15 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/sync-and-export.js && next dev",
+    "build": "node scripts/sync-and-export.js && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export-students": "node scripts/export-students.js",
+    "sync-and-export": "node scripts/sync-and-export.js"
   },
   "dependencies": {
     "next": "14.0.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "recharts": "^3.2.1"
   },
   "devDependencies": {
     "@types/node": "^20",

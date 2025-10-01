@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'سیستم مدیریت مدرسه دانا',
@@ -14,9 +15,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fa" dir="rtl" className="dark">
-      <body className="font-vazir bg-gray-900 text-white">
+      <body className="font-dirooz text-white">
         <ThemeProvider>
-          {children}
+          <Footer />
+          <main className="min-h-screen">
+            {children}
+          </main>
         </ThemeProvider>
       </body>
     </html>

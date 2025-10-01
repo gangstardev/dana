@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AddIcon, GradeIcon, SendIcon } from '@/components/icons/3DIcons';
-import TimePicker from '@/components/TimePicker';
 import Link from 'next/link';
+import { Subject } from '@/types/subject';
 
-interface Subject {
+interface HomeworkSubject {
   name: string;
   content: string;
   homework: string;
@@ -21,14 +21,24 @@ export default function HomeworkPage() {
     ]
   });
 
-  const [telegramConfig, setTelegramConfig] = useState({
-    chatId: '-1002984785754',
-    botToken: '7269213392:AAGqgJKGroShefQ6KAq7H3vF49gg1NTYZbQ',
-    sendTime: '18:00'
-  });
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState('');
+  const [availableSubjects, setAvailableSubjects] = useState<Subject[]>([]);
+
+  useEffect(() => {
+    fetchSubjects();
+  }, []);
+
+  const fetchSubjects = async () => {
+    try {
+      const response = await fetch('/api/subjects');
+      const data = await response.json();
+      setAvailableSubjects(data);
+    } catch (error) {
+      console.error('Error fetching subjects:', error);
+    }
+  };
 
   const addSubject = () => {
     setFormData({
@@ -37,7 +47,7 @@ export default function HomeworkPage() {
     });
   };
 
-  const updateSubject = (index: number, field: keyof Subject, value: string) => {
+  const updateSubject = (index: number, field: keyof HomeworkSubject, value: string) => {
     const newSubjects = [...formData.subjects];
     newSubjects[index][field] = value;
     setFormData({ ...formData, subjects: newSubjects });
@@ -56,6 +66,23 @@ export default function HomeworkPage() {
     setResult('');
 
     try {
+      // Auto export students data first
+      try {
+        const exportResponse = await fetch('/api/export-students', { method: 'POST' });
+        if (!exportResponse.ok) {
+          console.warn('Export students failed, continuing with existing data');
+        }
+      } catch (exportError) {
+        console.warn('Export students error:', exportError);
+      }
+      
+      // Fetch students data to send with homework
+      const studentsResponse = await fetch('/students-export.json');
+      if (!studentsResponse.ok) {
+        throw new Error(`Failed to fetch students data: ${studentsResponse.status}`);
+      }
+      const studentsData = await studentsResponse.json();
+
       const response = await fetch('https://dana-homework-worker.ggk2703.workers.dev/api/generate-homework', {
         method: 'POST',
         headers: {
@@ -63,7 +90,7 @@ export default function HomeworkPage() {
         },
         body: JSON.stringify({
           homeworkData: formData,
-          telegramConfig: telegramConfig
+          studentsData: studentsData
         })
       });
 
@@ -84,9 +111,9 @@ export default function HomeworkPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div>
       {/* Header */}
-      <header className="bg-gray-800 shadow-sm border-b border-gray-700">
+      <header className="bg-gray-900 shadow-lg border-b border-green-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center gap-4">
@@ -103,25 +130,24 @@ export default function HomeworkPage() {
                   <SendIcon className="w-8 h-8 text-green-600" />
                   ارسال تکلیف
                 </h1>
-                <p className="text-gray-300 mt-2">تولید و ارسال گزارش تکالیف با هوش مصنوعی</p>
+                <p className="text-green-300 mt-2">تولید و ارسال گزارش تکالیف با هوش مصنوعی</p>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Form */}
-          <div className="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Basic Info */}
+          <div className="bg-gray-900 rounded-lg shadow-lg p-6 border border-green-500 hover:shadow-xl hover:shadow-green-500/20 transition-all duration-300">
             <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
               <GradeIcon className="w-5 h-5" />
               اطلاعات تکلیف
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Basic Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     تاریخ
@@ -130,7 +156,7 @@ export default function HomeworkPage() {
                     type="text"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 transition-all duration-200"
                     placeholder="شنبه ۵ مهرماه"
                   />
                 </div>
@@ -142,135 +168,31 @@ export default function HomeworkPage() {
                   <select
                     value={formData.className}
                     onChange={(e) => setFormData({ ...formData, className: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 transition-all duration-200"
                   >
                     <option value="701">701</option>
                     <option value="702">702</option>
                   </select>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  نام معلم
-                </label>
-                <input
-                  type="text"
-                  value={formData.teacherName}
-                  onChange={(e) => setFormData({ ...formData, teacherName: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="نام معلم"
-                />
-              </div>
-
-              {/* Subjects */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white">دروس</h3>
-                  <button
-                    type="button"
-                    onClick={addSubject}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors flex items-center gap-2"
-                  >
-                    <AddIcon className="w-4 h-4" />
-                    افزودن درس
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  {formData.subjects.map((subject, index) => (
-                    <div key={index} className="bg-gray-700 p-4 rounded-lg border border-gray-600">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-white font-medium">درس {index + 1}</h4>
-                        {formData.subjects.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeSubject(index)}
-                            className="text-red-400 hover:text-red-300"
-                          >
-                            حذف
-                          </button>
-                        )}
-                      </div>
-                      
-                      <div className="space-y-3">
-                        <input
-                          type="text"
-                          value={subject.name}
-                          onChange={(e) => updateSubject(index, 'name', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="نام درس (مثل: ریاضی، فارسی، علوم)"
-                        />
-                        
-                        <textarea
-                          value={subject.content}
-                          onChange={(e) => updateSubject(index, 'content', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="محتوای تدریس شده"
-                          rows={2}
-                        />
-                        
-                        <textarea
-                          value={subject.homework}
-                          onChange={(e) => updateSubject(index, 'homework', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="تکلیف جلسه آینده"
-                          rows={2}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Telegram Config */}
-              <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
-                <h3 className="text-lg font-semibold text-white mb-4">تنظیمات تلگرام</h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Chat ID گروه
-                    </label>
-                    <input
-                      type="text"
-                      value={telegramConfig.chatId}
-                      onChange={(e) => setTelegramConfig({ ...telegramConfig, chatId: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="-1001234567890"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Bot Token
-                    </label>
-                    <input
-                      type="password"
-                      value={telegramConfig.botToken}
-                      onChange={(e) => setTelegramConfig({ ...telegramConfig, botToken: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz"
-                    />
-                  </div>
-                  
-                   <div>
-                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                       زمان ارسال
-                     </label>
-                     <TimePicker
-                       value={telegramConfig.sendTime}
-                       onChange={(value) => setTelegramConfig({ ...telegramConfig, sendTime: value })}
-                       placeholder="زمان ارسال را انتخاب کنید"
-                     />
-                   </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    نام معلم
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.teacherName}
+                    onChange={(e) => setFormData({ ...formData, teacherName: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 transition-all duration-200"
+                    placeholder="نام معلم"
+                  />
                 </div>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg hover:shadow-xl hover:scale-105"
               >
                 {loading ? (
                   <>
@@ -287,12 +209,126 @@ export default function HomeworkPage() {
             </form>
           </div>
 
+          {/* Subjects */}
+          <div className="bg-gray-900 rounded-lg shadow-lg p-6 border border-green-500 hover:shadow-xl hover:shadow-green-500/20 transition-all duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                <AddIcon className="w-5 h-5" />
+                دروس
+              </h2>
+              <button
+                type="button"
+                onClick={addSubject}
+                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
+              >
+                <AddIcon className="w-4 h-4" />
+                افزودن درس
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {formData.subjects.map((subject, index) => (
+                <div key={index} className="bg-gray-800 p-4 rounded-lg border border-gray-600 hover:border-green-500 transition-all duration-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-white font-medium">درس {index + 1}</h4>
+                    {formData.subjects.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeSubject(index)}
+                        className="text-red-400 hover:text-red-300"
+                      >
+                        حذف
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <select
+                      value={subject.name}
+                      onChange={(e) => updateSubject(index, 'name', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 transition-all duration-200"
+                    >
+                      <option value="">انتخاب درس</option>
+                      {availableSubjects.map((subject) => (
+                        <option key={subject.id} value={subject.name}>
+                          {subject.icon} {subject.name}
+                        </option>
+                      ))}
+                    </select>
+                    
+                    <textarea
+                      value={subject.content}
+                      onChange={(e) => updateSubject(index, 'content', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 transition-all duration-200"
+                      placeholder="محتوای تدریس شده"
+                      rows={2}
+                    />
+                    
+                    <textarea
+                      value={subject.homework}
+                      onChange={(e) => updateSubject(index, 'homework', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 transition-all duration-200"
+                      placeholder="تکلیف جلسه آینده"
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Result */}
-          <div className="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700">
+          <div className="bg-gray-900 rounded-lg shadow-lg p-6 border border-green-500 hover:shadow-xl hover:shadow-green-500/20 transition-all duration-300">
             <h2 className="text-xl font-semibold text-white mb-4">پیش‌نمایش گزارش</h2>
             
-            {result ? (
-              <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
+            {loading ? (
+              <div className="space-y-4">
+                {/* Skeleton Header */}
+                <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 bg-gray-700 rounded animate-pulse"></div>
+                    <div className="w-32 h-6 bg-gray-700 rounded animate-pulse"></div>
+                  </div>
+                  <div className="w-24 h-4 bg-gray-700 rounded animate-pulse"></div>
+                </div>
+
+                {/* Skeleton Content Lines */}
+                <div className="space-y-3">
+                  <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+                    <div className="space-y-2">
+                      <div className="w-full h-4 bg-gray-700 rounded animate-pulse"></div>
+                      <div className="w-3/4 h-4 bg-gray-700 rounded animate-pulse"></div>
+                      <div className="w-5/6 h-4 bg-gray-700 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+                    <div className="space-y-2">
+                      <div className="w-full h-4 bg-gray-700 rounded animate-pulse"></div>
+                      <div className="w-2/3 h-4 bg-gray-700 rounded animate-pulse"></div>
+                      <div className="w-4/5 h-4 bg-gray-700 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+                    <div className="space-y-2">
+                      <div className="w-full h-4 bg-gray-700 rounded animate-pulse"></div>
+                      <div className="w-3/5 h-4 bg-gray-700 rounded animate-pulse"></div>
+                      <div className="w-7/8 h-4 bg-gray-700 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Loading indicator */}
+                <div className="flex items-center justify-center py-4">
+                  <div className="flex items-center gap-3 text-green-400">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-400"></div>
+                    <span className="text-sm">در حال تولید گزارش...</span>
+                  </div>
+                </div>
+              </div>
+            ) : result ? (
+              <div className="bg-gray-800 p-4 rounded-lg border border-gray-600 hover:border-green-500 transition-all duration-200">
                 <pre className="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed">
                   {result}
                 </pre>

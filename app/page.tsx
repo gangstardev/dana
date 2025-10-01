@@ -111,19 +111,19 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="text-white">
       {/* Header */}
-      <header className="bg-gray-800 shadow-sm border-b border-gray-700">
+      <header className="bg-gray-900 shadow-lg border-b border-green-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
               <h1 className="text-3xl font-bold text-white">سیستم مدیریت مدرسه دانا</h1>
-              <p className="text-gray-300 mt-2">مدیریت دانش‌آموزان پایه هفتم</p>
+              <p className="text-green-300 mt-2">مدیریت دانش‌آموزان پایه هفتم</p>
             </div>
             <div className="flex items-center gap-4">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                className="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 hover:scale-110 hover:rotate-180 transition-all duration-300 border border-green-500 hover:border-green-400"
                 title={theme === 'dark' ? 'تغییر به تم روشن' : 'تغییر به تم تاریک'}
               >
                 {theme === 'dark' ? (
@@ -138,23 +138,32 @@ export default function Dashboard() {
               </button>
               <Link
                 href="/subjects"
-                className="bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors flex items-center gap-2"
+                className="bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 hover:scale-105 hover:shadow-lg transition-all duration-200 flex items-center gap-2 group"
               >
-                <GradeIcon className="w-5 h-5" />
+                <GradeIcon className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" />
                 مدیریت دروس
               </Link>
               <Link
                 href="/homework"
-                className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
+                className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 hover:scale-105 hover:shadow-lg transition-all duration-200 flex items-center gap-2 group"
               >
-                <SendIcon className="w-5 h-5" />
+                <SendIcon className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" />
                 ارسال تکلیف
               </Link>
               <Link
-                href="/students/new"
-                className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                href="/completions"
+                className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 hover:scale-105 hover:shadow-lg transition-all duration-200 flex items-center gap-2 group"
               >
-                <AddIcon className="w-5 h-5" />
+                <svg className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                گزارش تکالیف
+              </Link>
+              <Link
+                href="/students/new"
+                className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 hover:scale-105 hover:shadow-lg transition-all duration-200 flex items-center gap-2 group"
+              >
+                <AddIcon className="w-5 h-5 group-hover:rotate-12 transition-transform duration-200" />
                 افزودن دانش‌آموز جدید
               </Link>
             </div>
@@ -164,7 +173,7 @@ export default function Dashboard() {
 
       {/* Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-gray-800 rounded-lg shadow-sm p-6 mb-6 border border-gray-700">
+        <div className="bg-gray-800 rounded-lg shadow-lg p-6 mb-6 border border-green-500 hover:shadow-xl hover:shadow-green-500/20 transition-all duration-300">
           <h2 className="text-lg font-semibold text-white mb-4">فیلترها و مرتب‌سازی</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div>
@@ -172,7 +181,7 @@ export default function Dashboard() {
               <select
                 value={filters.className}
                 onChange={(e) => setFilters({ ...filters, className: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 hover:bg-gray-600 transition-all duration-200"
               >
                 <option value="">همه کلاس‌ها</option>
                 <option value="701">701</option>
@@ -187,7 +196,7 @@ export default function Dashboard() {
                 value={filters.searchName}
                 onChange={(e) => setFilters({ ...filters, searchName: e.target.value })}
                 placeholder="نام دانش‌آموز"
-                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 hover:bg-gray-600 transition-all duration-200"
               />
             </div>
 
@@ -200,7 +209,7 @@ export default function Dashboard() {
                 value={filters.minDiscipline}
                 onChange={(e) => setFilters({ ...filters, minDiscipline: e.target.value })}
                 placeholder="0"
-                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 hover:bg-gray-600 transition-all duration-200"
               />
             </div>
 
@@ -209,7 +218,7 @@ export default function Dashboard() {
               <select
                 value={filters.sortBy}
                 onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 hover:border-green-400 hover:bg-gray-600 transition-all duration-200"
               >
                 <option value="name">نام</option>
                 <option value="class">کلاس</option>
@@ -227,7 +236,7 @@ export default function Dashboard() {
                   minDiscipline: '',
                   sortBy: 'name'
                 })}
-                className="w-full bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-500 transition-colors"
+                className="w-full bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-500 hover:scale-105 hover:shadow-lg transition-all duration-200"
               >
                 پاک کردن فیلترها
               </button>
@@ -237,7 +246,7 @@ export default function Dashboard() {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <div className="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 border border-green-500 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 transition-all duration-300">
             <div className="flex items-center">
               <div className="p-2 bg-blue-900 rounded-lg">
                 <StudentIcon className="w-6 h-6 text-blue-400" />
@@ -249,7 +258,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 border border-green-500 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 transition-all duration-300">
             <div className="flex items-center">
               <div className="p-2 bg-green-900 rounded-lg">
                 <ClassIcon className="w-6 h-6 text-green-400" />
@@ -261,7 +270,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 border border-green-500 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 transition-all duration-300">
             <div className="flex items-center">
               <div className="p-2 bg-purple-900 rounded-lg">
                 <ClassIcon className="w-6 h-6 text-purple-400" />
@@ -273,7 +282,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-700">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 border border-green-500 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 transition-all duration-300">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-900 rounded-lg">
                 <StatsIcon className="w-6 h-6 text-yellow-400" />

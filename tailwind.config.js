@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         'vazir': ['Vazirmatn', 'sans-serif'],
+        'dirooz': ['Dirooz-FD', 'Vazirmatn', 'sans-serif'],
       },
     },
   },

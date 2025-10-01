@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { CreateSubjectData } from '@/types/subject';
+import { CreateSubjectData, Subject } from '@/types/subject';
 import { AddIcon } from '@/components/icons/3DIcons';
 
 interface SubjectFormProps {
+  subject?: Subject;
   onSubmit: (data: CreateSubjectData) => void;
   onCancel: () => void;
 }
@@ -19,12 +20,12 @@ const availableColors = [
   '#EC4899', '#06B6D4', '#84CC16', '#F97316', '#6366F1'
 ];
 
-export default function SubjectForm({ onSubmit, onCancel }: SubjectFormProps) {
+export default function SubjectForm({ subject, onSubmit, onCancel }: SubjectFormProps) {
   const [formData, setFormData] = useState<CreateSubjectData>({
-    name: '',
-    description: '',
-    color: availableColors[0],
-    icon: availableIcons[0]
+    name: subject?.name || '',
+    description: subject?.description || '',
+    color: subject?.color || availableColors[0],
+    icon: subject?.icon || availableIcons[0]
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});

@@ -1,0 +1,66 @@
+{
+  "version": "1.0",
+  "timestamp": "2025-10-01T14:24:06.087Z",
+  "students": [
+    {
+      "id": "1",
+      "fullName": "علی احمدی",
+      "className": "701",
+      "profileImage": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      "searchNames": [
+        "علی احمدی",
+        "علیاحمدی",
+        "علی",
+        "احمدی"
+      ]
+    },
+    {
+      "id": "2",
+      "fullName": "فاطمه رضایی",
+      "className": "701",
+      "profileImage": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
+      "searchNames": [
+        "فاطمه رضایی",
+        "فاطمهرضایی",
+        "فاطمه",
+        "رضایی"
+      ]
+    },
+    {
+      "id": "3",
+      "fullName": "محمد حسینی",
+      "className": "702",
+      "profileImage": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+      "searchNames": [
+        "محمد حسینی",
+        "محمدحسینی",
+        "محمد",
+        "حسینی"
+      ]
+    },
+    {
+      "id": "4",
+      "fullName": "سمیرا شمسائی",
+      "className": "702",
+      "profileImage": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+      "searchNames": [
+        "سمیرا شمسائی",
+        "سمیراشمسائی",
+        "سمیرا",
+        "شمسائی"
+      ]
+    },
+    {
+      "id": "5",
+      "fullName": "حسن محمدی",
+      "className": "701",
+      "profileImage": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+      "searchNames": [
+        "حسن محمدی",
+        "حسنمحمدی",
+        "حسن",
+        "محمدی"
+      ]
+    }
+  ]
+}

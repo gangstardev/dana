@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Student } from '@/types/student';
 import Link from 'next/link';
 import { EditIcon, DeleteIcon, GradeIcon, DisciplineIcon, StatsIcon } from '@/components/icons/3DIcons';
+import StudentChart from '@/components/StudentChart';
 
 interface StudentDetailProps {
   params: {
@@ -59,7 +60,7 @@ export default function StudentDetail({ params }: StudentDetailProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
           <p className="mt-4 text-gray-600">در حال بارگذاری...</p>
@@ -70,7 +71,7 @@ export default function StudentDetail({ params }: StudentDetailProps) {
 
   if (!student) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">دانش‌آموز یافت نشد</h1>
           <Link href="/" className="text-blue-500 hover:text-blue-600">
@@ -86,7 +87,7 @@ export default function StudentDetail({ params }: StudentDetailProps) {
     : '0';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div>
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -129,25 +130,38 @@ export default function StudentDetail({ params }: StudentDetailProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Student Information */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Charts Section */}
+            <StudentChart student={student} />
             {/* Basic Info */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">اطلاعات پایه</h2>
+            <div className="bg-gray-900 rounded-lg shadow-lg p-6 border border-green-500">
+              <h2 className="text-xl font-semibold text-white mb-4">اطلاعات پایه</h2>
+              <div className="flex items-start gap-6 mb-6">
+                <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-green-500 flex-shrink-0">
+                  {student.profileImage ? (
+                    <img 
+                      src={student.profileImage} 
+                      alt={student.fullName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-2xl">
+                      {student.fullName.charAt(0)}
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-white mb-2">{student.fullName}</h3>
+                  <p className="text-green-300 text-lg">کلاس {student.className}</p>
+                </div>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-600">نام کامل</label>
-                  <p className="text-lg text-gray-900">{student.fullName}</p>
+                  <label className="block text-sm font-medium text-gray-300">نمره انضباط</label>
+                  <p className="text-lg text-white">{student.discipline}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600">کلاس</label>
-                  <p className="text-lg text-gray-900">{student.className}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-600">نمره انضباط</label>
-                  <p className="text-lg text-gray-900">{student.discipline}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-600">میانگین نمرات</label>
-                  <p className="text-lg text-gray-900">{averageGrade}</p>
+                  <label className="block text-sm font-medium text-gray-300">میانگین نمرات</label>
+                  <p className="text-lg text-white">{averageGrade}</p>
                 </div>
               </div>
             </div>
